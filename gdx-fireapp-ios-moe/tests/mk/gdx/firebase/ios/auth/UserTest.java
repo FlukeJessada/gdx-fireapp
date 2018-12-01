@@ -32,7 +32,8 @@ import apple.foundation.NSError;
 import apple.foundation.NSURL;
 import bindings.google.firebaseauth.FIRAuth;
 import bindings.google.firebaseauth.FIRUser;
-import mk.gdx.firebase.callbacks.CompleteCallback;
+import mk.gdx.firebase.functional.BiConsumer;
+import mk.gdx.firebase.functional.Consumer;
 import mk.gdx.firebase.ios.GdxIOSAppTest;
 
 @PrepareForTest({NatJ.class, FIRAuth.class, FIRUser.class, NSURL.class, NSError.class, PtrFactory.class, Ptr.class})
@@ -60,7 +61,7 @@ public class UserTest extends GdxIOSAppTest {
         User user = new User();
 
         // When
-        user.updateEmail(null, null);
+        user.updateEmail(null);
 
         // Then
         Assert.fail();
@@ -72,7 +73,7 @@ public class UserTest extends GdxIOSAppTest {
         User user = new User();
 
         // When
-        user.sendEmailVerification(null);
+        user.sendEmailVerification();
 
         // Then
         Assert.fail();
@@ -84,7 +85,7 @@ public class UserTest extends GdxIOSAppTest {
         User user = new User();
 
         // When
-        user.updatePassword(null, null);
+        user.updatePassword(null);
 
         // Then
         Assert.fail();
@@ -96,7 +97,7 @@ public class UserTest extends GdxIOSAppTest {
         User user = new User();
 
         // When
-        user.delete(null);
+        user.delete();
 
         // Then
         Assert.fail();
@@ -106,7 +107,7 @@ public class UserTest extends GdxIOSAppTest {
     public void updateEmail() {
         // Given
         User user = new User();
-        CompleteCallback callback = Mockito.mock(CompleteCallback.class);
+        Consumer consumer = Mockito.mock(Consumer.class);
         Mockito.when(firAuth.currentUser()).thenReturn(firUser);
         Mockito.doAnswer(new Answer() {
             @Override
@@ -118,18 +119,18 @@ public class UserTest extends GdxIOSAppTest {
         String arg1 = "email";
 
         // When
-        user.updateEmail(arg1, callback);
+        user.updateEmail(arg1).then(consumer);
 
         // Then
         Mockito.verify(firUser, VerificationModeFactory.times(1)).updateEmailCompletion(Mockito.eq(arg1), Mockito.any());
-        Mockito.verify(callback, VerificationModeFactory.times(1)).onSuccess();
+        Mockito.verify(consumer, VerificationModeFactory.times(1)).accept(Mockito.isNull());
     }
 
     @Test
     public void updateEmail_fail() {
         // Given
         User user = new User();
-        CompleteCallback callback = Mockito.mock(CompleteCallback.class);
+        BiConsumer consumer = Mockito.mock(BiConsumer.class);
         Mockito.when(firAuth.currentUser()).thenReturn(firUser);
         Mockito.doAnswer(new Answer() {
             @Override
@@ -141,18 +142,18 @@ public class UserTest extends GdxIOSAppTest {
         String arg1 = "email";
 
         // When
-        user.updateEmail(arg1, callback);
+        user.updateEmail(arg1).fail(consumer);
 
         // Then
         Mockito.verify(firUser, VerificationModeFactory.times(1)).updateEmailCompletion(Mockito.eq(arg1), Mockito.any());
-        Mockito.verify(callback, VerificationModeFactory.times(1)).onError(Mockito.any(Exception.class));
+        Mockito.verify(consumer, VerificationModeFactory.times(1)).accept(Mockito.nullable(String.class), Mockito.any(Exception.class));
     }
 
     @Test
     public void sendEmailVerification() {
         // Given
         User user = new User();
-        CompleteCallback callback = Mockito.mock(CompleteCallback.class);
+        Consumer consumer = Mockito.mock(Consumer.class);
         Mockito.when(firAuth.currentUser()).thenReturn(firUser);
         Mockito.doAnswer(new Answer() {
             @Override
@@ -163,18 +164,18 @@ public class UserTest extends GdxIOSAppTest {
         }).when(firUser).sendEmailVerificationWithCompletion(Mockito.any(FIRUser.Block_sendEmailVerificationWithCompletion.class));
 
         // When
-        user.sendEmailVerification(callback);
+        user.sendEmailVerification().then(consumer);
 
         // Then
         Mockito.verify(firUser, VerificationModeFactory.times(1)).sendEmailVerificationWithCompletion(Mockito.any());
-        Mockito.verify(callback, VerificationModeFactory.times(1)).onSuccess();
+        Mockito.verify(consumer, VerificationModeFactory.times(1)).accept(Mockito.isNull());
     }
 
     @Test
     public void sendEmailVerification_fail() {
         // Given
         User user = new User();
-        CompleteCallback callback = Mockito.mock(CompleteCallback.class);
+        BiConsumer consumer = Mockito.mock(BiConsumer.class);
         Mockito.when(firAuth.currentUser()).thenReturn(firUser);
         Mockito.doAnswer(new Answer() {
             @Override
@@ -186,18 +187,18 @@ public class UserTest extends GdxIOSAppTest {
         }).when(firUser).sendEmailVerificationWithCompletion(Mockito.any(FIRUser.Block_sendEmailVerificationWithCompletion.class));
 
         // When
-        user.sendEmailVerification(callback);
+        user.sendEmailVerification().fail(consumer);
 
         // Then
         Mockito.verify(firUser, VerificationModeFactory.times(1)).sendEmailVerificationWithCompletion(Mockito.any());
-        Mockito.verify(callback, VerificationModeFactory.times(1)).onError(Mockito.any(Exception.class));
+        Mockito.verify(consumer, VerificationModeFactory.times(1)).accept(Mockito.nullable(String.class), Mockito.any(Exception.class));
     }
 
     @Test
     public void updatePassword() {
         // Given
         User user = new User();
-        CompleteCallback callback = Mockito.mock(CompleteCallback.class);
+        Consumer consumer = Mockito.mock(Consumer.class);
         Mockito.when(firAuth.currentUser()).thenReturn(firUser);
         Mockito.doAnswer(new Answer() {
             @Override
@@ -209,18 +210,18 @@ public class UserTest extends GdxIOSAppTest {
         char[] arg1 = {'p', 'a', 's', 's'};
 
         // When
-        user.updatePassword(arg1, callback);
+        user.updatePassword(arg1).then(consumer);
 
         // Then
         Mockito.verify(firUser, VerificationModeFactory.times(1)).updatePasswordCompletion(Mockito.eq(new String(arg1)), Mockito.any());
-        Mockito.verify(callback, VerificationModeFactory.times(1)).onSuccess();
+        Mockito.verify(consumer, VerificationModeFactory.times(1)).accept(Mockito.isNull());
     }
 
     @Test
     public void updatePassword_fail() {
         // Given
         User user = new User();
-        CompleteCallback callback = Mockito.mock(CompleteCallback.class);
+        BiConsumer consumer = Mockito.mock(BiConsumer.class);
         Mockito.when(firAuth.currentUser()).thenReturn(firUser);
         Mockito.doAnswer(new Answer() {
             @Override
@@ -233,18 +234,18 @@ public class UserTest extends GdxIOSAppTest {
         char[] arg1 = {'p', 'a', 's', 's'};
 
         // When
-        user.updatePassword(arg1, callback);
+        user.updatePassword(arg1).fail(consumer);
 
         // Then
         Mockito.verify(firUser, VerificationModeFactory.times(1)).updatePasswordCompletion(Mockito.eq(new String(arg1)), Mockito.any());
-        Mockito.verify(callback, VerificationModeFactory.times(1)).onError(Mockito.any(Exception.class));
+        Mockito.verify(consumer, VerificationModeFactory.times(1)).accept(Mockito.nullable(String.class), Mockito.any(Exception.class));
     }
 
     @Test
     public void delete() {
         // Given
         User user = new User();
-        CompleteCallback callback = Mockito.mock(CompleteCallback.class);
+        Consumer consumer = Mockito.mock(Consumer.class);
         Mockito.when(firAuth.currentUser()).thenReturn(firUser);
         Mockito.doAnswer(new Answer() {
             @Override
@@ -255,18 +256,18 @@ public class UserTest extends GdxIOSAppTest {
         }).when(firUser).deleteWithCompletion(Mockito.any(FIRUser.Block_deleteWithCompletion.class));
 
         // When
-        user.delete(callback);
+        user.delete().then(consumer);
 
         // Then
         Mockito.verify(firUser, VerificationModeFactory.times(1)).deleteWithCompletion(Mockito.any());
-        Mockito.verify(callback, VerificationModeFactory.times(1)).onSuccess();
+        Mockito.verify(consumer, VerificationModeFactory.times(1)).accept(Mockito.isNull());
     }
 
     @Test
     public void delete_fail() {
         // Given
         User user = new User();
-        CompleteCallback callback = Mockito.mock(CompleteCallback.class);
+        BiConsumer consumer = Mockito.mock(BiConsumer.class);
         Mockito.when(firAuth.currentUser()).thenReturn(firUser);
         Mockito.doAnswer(new Answer() {
             @Override
@@ -278,10 +279,10 @@ public class UserTest extends GdxIOSAppTest {
         }).when(firUser).deleteWithCompletion(Mockito.any(FIRUser.Block_deleteWithCompletion.class));
 
         // When
-        user.delete(callback);
+        user.delete().fail(consumer);
 
         // Then
         Mockito.verify(firUser, VerificationModeFactory.times(1)).deleteWithCompletion(Mockito.any());
-        Mockito.verify(callback, VerificationModeFactory.times(1)).onError(Mockito.any(Exception.class));
+        Mockito.verify(consumer, VerificationModeFactory.times(1)).accept(Mockito.nullable(String.class), Mockito.any(Exception.class));
     }
 }
