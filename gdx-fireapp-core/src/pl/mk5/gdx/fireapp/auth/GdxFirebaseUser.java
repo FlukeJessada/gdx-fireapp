@@ -82,4 +82,9 @@ public class GdxFirebaseUser implements AuthUserDistribution {
     public Promise<Void> delete() {
         return userDistribution.delete();
     }
+
+    @Override
+    public Promise<Void> reload() {
+        return userDistribution.reload();
+    }
 }

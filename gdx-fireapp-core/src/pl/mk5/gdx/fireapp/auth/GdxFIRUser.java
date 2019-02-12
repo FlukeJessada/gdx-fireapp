@@ -47,6 +47,11 @@ class GdxFIRUser extends PlatformDistributor<AuthUserDistribution> implements Au
     }
 
     @Override
+    public Promise<Void> reload() {
+        return platformObject.reload();
+    }
+
+    @Override
     protected String getIOSClassName() {
         return "pl.mk5.gdx.fireapp.ios.auth.User";
     }

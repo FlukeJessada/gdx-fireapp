@@ -253,4 +253,36 @@ public class UserTest extends AndroidContextTest {
         Mockito.verify(firebaseUser, VerificationModeFactory.times(1)).delete();
         Mockito.verify(consumer, VerificationModeFactory.times(1)).accept(Mockito.nullable(String.class), Mockito.nullable(Exception.class));
     }
+
+    @Test
+    public void reload() {
+        // Given
+        User user = new User();
+        FirebaseUser firebaseUser = Mockito.mock(FirebaseUser.class);
+        Mockito.when(firebaseAuth.getCurrentUser()).thenReturn(firebaseUser);
+        Mockito.when(task.isSuccessful()).thenReturn(true);
+        Mockito.when(firebaseUser.reload()).thenReturn(task);
+
+        // When
+        user.reload();
+
+        // Then
+        Mockito.verify(firebaseUser, VerificationModeFactory.times(1)).reload();
+    }
+
+    @Test
+    public void reload_fail() {
+        // Given
+        User user = new User();
+        FirebaseUser firebaseUser = Mockito.mock(FirebaseUser.class);
+        Mockito.when(firebaseAuth.getCurrentUser()).thenReturn(firebaseUser);
+        Mockito.when(task.isSuccessful()).thenReturn(false);
+        Mockito.when(firebaseUser.reload()).thenReturn(task);
+
+        // When
+        user.reload();
+
+        // Then
+        Mockito.verify(firebaseUser, VerificationModeFactory.times(1)).reload();
+    }
 }

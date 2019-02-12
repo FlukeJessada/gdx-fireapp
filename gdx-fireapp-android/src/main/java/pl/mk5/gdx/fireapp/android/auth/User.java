@@ -61,4 +61,12 @@ public class User implements AuthUserDistribution {
         }
         return FuturePromise.when(new VoidPromiseConsumer<>(FirebaseAuth.getInstance().getCurrentUser().delete()));
     }
+
+    @Override
+    public Promise<Void> reload() {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            throw new IllegalStateException();
+        }
+        return FuturePromise.when(new VoidPromiseConsumer<>(FirebaseAuth.getInstance().getCurrentUser().reload()));
+    }
 }
