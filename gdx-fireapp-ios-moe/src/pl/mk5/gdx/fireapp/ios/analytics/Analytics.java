@@ -20,6 +20,7 @@ import java.util.Map;
 
 import apple.foundation.NSDictionary;
 import apple.foundation.NSMutableDictionary;
+import apple.foundation.NSOperationQueue;
 import apple.foundation.NSString;
 import bindings.google.firebaseanalytics.FIRAnalytics;
 import pl.mk5.gdx.fireapp.distributions.AnalyticsDistribution;
@@ -55,8 +56,13 @@ public class Analytics implements AnalyticsDistribution {
      * {@inheritDoc}
      */
     @Override
-    public void setScreen(String name, Class<?> screenClass) {
-        FIRAnalytics.setScreenNameScreenClass(name, screenClass.getSimpleName());
+    public void setScreen(final String name, final Class<?> screenClass) {
+        NSOperationQueue.mainQueue().addOperationWithBlock(new NSOperationQueue.Block_addOperationWithBlock() {
+            @Override
+            public void call_addOperationWithBlock() {
+                FIRAnalytics.setScreenNameScreenClass(name, screenClass.getSimpleName());
+            }
+        });
     }
 
     /**

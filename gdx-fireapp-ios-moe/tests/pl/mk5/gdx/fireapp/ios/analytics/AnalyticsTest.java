@@ -19,6 +19,8 @@ package pl.mk5.gdx.fireapp.ios.analytics;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.moe.natj.general.NatJ;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -27,11 +29,12 @@ import java.util.Collections;
 
 import apple.foundation.NSDictionary;
 import apple.foundation.NSMutableDictionary;
+import apple.foundation.NSOperationQueue;
 import apple.foundation.NSString;
 import bindings.google.firebaseanalytics.FIRAnalytics;
 import pl.mk5.gdx.fireapp.ios.GdxIOSAppTest;
 
-@PrepareForTest({FIRAnalytics.class, NatJ.class, NSDictionary.class, NSMutableDictionary.class, NSString.class})
+@PrepareForTest({FIRAnalytics.class, NatJ.class, NSDictionary.class, NSMutableDictionary.class, NSString.class, NSOperationQueue.class})
 public class AnalyticsTest extends GdxIOSAppTest {
 
     @Override
@@ -62,8 +65,19 @@ public class AnalyticsTest extends GdxIOSAppTest {
     }
 
     @Test
-    public void setScreen() {
+    public void setScreen() throws Exception {
         // Given
+        PowerMockito.mockStatic(NSOperationQueue.class);
+        NSOperationQueue nsOperationQueue = PowerMockito.mock(NSOperationQueue.class);
+        PowerMockito.when(NSOperationQueue.class, "mainQueue").thenReturn(nsOperationQueue);
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) {
+                ((NSOperationQueue.Block_addOperationWithBlock) invocation.getArgument(0)).call_addOperationWithBlock();
+                return null;
+            }
+        }).when(nsOperationQueue).addOperationWithBlock(Mockito.any(NSOperationQueue.Block_addOperationWithBlock.class));
+
         Analytics analytics = new Analytics();
 
         // When
